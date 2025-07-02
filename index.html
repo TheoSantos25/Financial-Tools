@@ -234,16 +234,12 @@
             },
             // --- UTILITY FUNCTIONS ---
             utils: {
-                CHART_COLORS: {
-                    teal: 'rgba(45, 212, 191, 1)',
-                    blue: 'rgba(96, 165, 250, 1)',
-                    purple: 'rgba(167, 139, 250, 1)',
-                    pink: 'rgba(244, 114, 182, 1)',
-                    red: 'rgba(248, 113, 113, 1)',
-                    dark: '#0f172a',
-                    light: '#cbd5e1',
-                    medium: '#1e293b'
-                },
+             CHART_COLORS: {
+    teal: 'rgba(45, 212, 191, 1)',
+    blue: 'rgba(96, 165, 250, 1)',
+    purple: 'rgba(167, 139, 250, 1)',
+    red: 'rgba(248, 113, 113, 1)', // <-- THIS LINE ADDED (Red 400)
+},
                 parseCurrency: (value) => parseFloat(String(value).replace(/[^0-9.-]+/g, "")) || 0,
                 formatCurrency: (value, cents = false) => {
                     const options = { style: 'currency', currency: 'USD' };
