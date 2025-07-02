@@ -227,7 +227,6 @@
         const App = {
             // --- STATE & CONFIG ---
             activeCalculator: null,
-            charts: {},
             elements: {
                 nav: document.getElementById('calculator-nav'),
                 content: document.getElementById('main-content'),
@@ -235,6 +234,16 @@
             },
             // --- UTILITY FUNCTIONS ---
             utils: {
+                CHART_COLORS: {
+                    teal: 'rgba(45, 212, 191, 1)',
+                    blue: 'rgba(96, 165, 250, 1)',
+                    purple: 'rgba(167, 139, 250, 1)',
+                    pink: 'rgba(244, 114, 182, 1)',
+                    red: 'rgba(248, 113, 113, 1)',
+                    dark: '#0f172a',
+                    light: '#cbd5e1',
+                    medium: '#1e293b'
+                },
                 parseCurrency: (value) => parseFloat(String(value).replace(/[^0-9.-]+/g, "")) || 0,
                 formatCurrency: (value, cents = false) => {
                     const options = { style: 'currency', currency: 'USD' };
@@ -253,7 +262,6 @@
             init() {
                 this.setupNavigation();
                 this.setupEventListeners();
-                // Activate the default calculator
                 const defaultCalc = this.elements.nav.querySelector('.active')?.dataset.target || 'salary';
                 this.switchCalculator(defaultCalc);
             },
@@ -279,32 +287,27 @@
             // --- CORE LOGIC ---
             switchCalculator(targetId) {
                 this.activeCalculator = targetId;
-                // Update nav links
                 this.elements.nav.querySelectorAll('.sidebar-nav-link').forEach(link => {
                     link.classList.toggle('active', link.dataset.target === targetId);
                 });
-                // Update content panels
                 this.elements.containers.forEach(container => {
                     container.classList.toggle('active', container.id === `${targetId}-calculator`);
                 });
-                // Initialize the calculator if it has an init function
                 this.calculators[targetId]?.init?.();
             },
             
             // --- CALCULATOR MODULES ---
             calculators: {
-                // Placeholder for other calculators to maintain structure
-                mortgage: { init() { console.log("Mortgage Calculator Initialized"); } },
-                'auto-loan': { init() { console.log("Auto Loan Calculator Initialized"); } },
-                savings: { init() { console.log("Savings Calculator Initialized"); } },
-                retirement: { init() { console.log("Retirement Calculator Initialized"); } },
+                mortgage: { init() {} },
+                'auto-loan': { init() {} },
+                savings: { init() {} },
+                retirement: { init() {} },
 
                 salary: {
                     elements: {},
                     chart: null,
                     
                     init() {
-                        // Cache elements only once
                         this.elements = {
                             payFrequency: document.getElementById('payFrequency'),
                             payType: document.getElementById('payType'),
@@ -422,14 +425,14 @@
                     },
 
                     updateChart(takeHome, taxes, benefits) {
-                        const CHART_COLORS = App.utils.CHART_COLORS || {};
+                        const CHART_COLORS = App.utils.CHART_COLORS;
                         const ctx = this.elements.canvas.getContext('2d');
                         const data = {
                             labels: ['Take Home', 'Taxes', 'Benefits'],
                             datasets: [{ 
                                 data: [takeHome, taxes, benefits], 
                                 backgroundColor: [CHART_COLORS.teal, CHART_COLORS.red, CHART_COLORS.purple],
-                                borderColor: CHART_COLORS.medium || '#1e293b',
+                                borderColor: CHART_COLORS.medium,
                                 borderWidth: 4,
                                 hoverOffset: 8
                             }]
@@ -438,7 +441,7 @@
                             this.chart.data = data; 
                             this.chart.update(); 
                         } else { 
-                            this.chart = new Chart(ctx, { type: 'doughnut', data, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { color: CHART_COLORS.light || '#cbd5e1', boxWidth: 12, padding: 20 } } } } }); 
+                            this.chart = new Chart(ctx, { type: 'doughnut', data, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { color: CHART_COLORS.light, boxWidth: 12, padding: 20 } } } } }); 
                         }
                     }
                 }
@@ -451,3 +454,4 @@
     </script>
 </body>
 </html>
+
