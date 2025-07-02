@@ -75,7 +75,11 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
-        
+        .calculator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+        }
+
         .input-group {
             background-color: var(--bg-dark); border-radius: 0.75rem; padding: 1rem;
             transition: box-shadow 0.3s ease; display: flex; align-items: center;
@@ -92,10 +96,19 @@
             outline: none; padding-left: 0.5rem;
         }
          .select-field { padding-left: 0; padding-right: 0.5rem; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right .5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; }
+
         
-        .select-field option {
-            background: var(--bg-medium);
-            color: var(--text-heading);
+        .slider {
+            -webkit-appearance: none; appearance: none;
+            width: 100%; height: 8px; background: var(--border-color);
+            border-radius: 5px; outline: none; transition: opacity .2s;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 22px; height: 22px; background: var(--accent-teal);
+            cursor: pointer; border-radius: 50%;
+            border: 3px solid var(--bg-medium);
+            box-shadow: 0 0 5px rgba(45, 212, 191, 0.7);
         }
 
         .result-highlight-container { position: relative; cursor: pointer; }
@@ -111,12 +124,12 @@
             text-align: center; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 2.75rem;
         }
         
-        .tab-button { transition: all 0.3s ease; border-bottom: 3px solid transparent; padding-bottom: 0.5rem; }
+        .tab-button { transition: all 0.3s ease; border-bottom: 2px solid transparent; }
         .tab-button.active { color: var(--accent-teal); border-bottom-color: var(--accent-teal); }
         
         .results-table th { background-color: var(--border-color); }
-        .results-table tr { border-bottom: 1px solid var(--border-color); }
-        .results-table tr:last-child { border-bottom: none; }
+        .results-table tr:nth-child(even) { background-color: var(--bg-medium); }
+        .results-table tr:nth-child(odd) { background-color: #273449; }
         .results-table td, .results-table th { padding: 0.75rem 1rem; text-align: right;}
         .results-table td:first-child, .results-table th:first-child { text-align: left; font-weight: 600; color: var(--text-heading)}
     </style>
@@ -127,90 +140,93 @@
         <aside class="sidebar">
             <h2 class="text-2xl font-bold text-white mb-8">Calculators</h2>
             <nav id="calculator-nav" class="space-y-2">
-                <a class="sidebar-nav-link" data-target="mortgage">Mortgage Calculator</a>
+                <a class="sidebar-nav-link active" data-target="mortgage">Mortgage Calculator</a>
                 <a class="sidebar-nav-link" data-target="auto-loan">Auto Loan Calculator</a>
                 <a class="sidebar-nav-link" data-target="savings">Savings Calculator</a>
                 <a class="sidebar-nav-link" data-target="retirement">Retirement Calculator</a>
-                <a class="sidebar-nav-link active" data-target="salary">Salary Paycheck Calculator</a>
+                <a class="sidebar-nav-link" data-target="salary">Salary Calculator</a>
             </nav>
         </aside>
 
-        <main id="main-content" class="content-area">
+        <main class="content-area">
             
-            <div id="mortgage-calculator" class="calculator-container">
-                 <!-- Mortgage Calculator HTML (Omitted for brevity, structure is consistent) -->
+            <div id="mortgage-calculator" class="calculator-container active">
+                <!-- Mortgage Calculator HTML (unchanged) -->
+                <header class="text-center mb-10"><h1 class="text-4xl sm:text-5xl font-bold text-white tracking-tight">Mortgage Calculator</h1></header>
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    <div class="lg:col-span-2"><div class="calculator-card p-6 space-y-6"><div><label for="homePrice">Home Price</label><div class="input-group"><span>$</span><input type="text" id="homePrice" class="input-field" value="500,000"></div></div><div><label for="downPayment">Down Payment</label><div class="input-group"><span>$</span><input type="text" id="downPayment" class="input-field" value="100,000"></div></div><div><label for="loanTerm">Loan Term (Years)</label><div class="input-group"><input type="number" id="loanTerm" class="input-field" value="30"></div></div><div><label for="interestRate">Interest Rate (%)</label><div class="input-group"><input type="number" id="interestRate" class="input-field" value="6.5"></div></div><div class="pt-4 border-t border-slate-700"><h3 class="text-lg font-semibold mb-3">Additional Costs</h3><div class="space-y-4"><div><label for="propTaxes">Property Taxes (Annual)</label><div class="input-group"><span>$</span><input type="text" id="propTaxes" class="input-field" value="4,000"></div></div><div><label for="homeInsurance">Home Insurance (Annual)</label><div class="input-group"><span>$</span><input type="text" id="homeInsurance" class="input-field" value="1,500"></div></div><div><label for="hoaFees">HOA Fees (Monthly)</label><div class="input-group"><span>$</span><input type="text" id="hoaFees" class="input-field" value="100"></div></div></div></div></div></div>
+                    <div class="lg:col-span-3"><div class="calculator-card p-6"><h2 class="text-2xl font-bold text-white mb-2">Estimated Monthly Payment</h2><div id="monthlyPaymentContainer" class="result-highlight-container text-center mb-4"><p id="monthlyPayment" class="result-highlight">$0.00</p><input type="number" id="monthlyPaymentInput" class="result-highlight result-input hidden" /></div><p id="loanAmountInfo" class="text-center text-sm text-slate-400 mb-4">based on a loan amount of $400,000</p><div class="mb-6"><div class="flex border-b border-slate-700"><button id="mortgageChartTab" class="tab-button active py-2 px-4 font-semibold">Breakdown</button><button id="mortgageTableTab" class="tab-button py-2 px-4 font-semibold">Amortization</button></div></div><div id="mortgageResultsContent"><div id="mortgageChartContainer" class="h-64"><canvas id="paymentChart"></canvas></div><div id="mortgageTableContainer" class="hidden h-96 overflow-y-auto"><table class="w-full text-left text-sm results-table"><thead><tr><th>Month</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead><tbody id="amortizationTableBody"></tbody></table></div></div></div></div>
+                </div>
             </div>
 
             <div id="auto-loan-calculator" class="calculator-container">
-                 <!-- Auto Loan Calculator HTML (Omitted for brevity, structure is consistent) -->
+                <!-- Auto Loan Calculator HTML (unchanged) -->
+                 <header class="text-center mb-10"><h1 class="text-4xl sm:text-5xl font-bold text-white tracking-tight">Auto Loan Calculator</h1></header>
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    <div class="lg:col-span-2"><div class="calculator-card p-6 space-y-6"><div><label for="autoPrice">Vehicle Price</label><div class="input-group"><span>$</span><input type="text" id="autoPrice" class="input-field" value="35,000"></div></div><div><label for="autoDownPayment">Down Payment</label><div class="input-group"><span>$</span><input type="text" id="autoDownPayment" class="input-field" value="5,000"></div></div><div><label for="autoTradeIn">Trade-in Value</label><div class="input-group"><span>$</span><input type="text" id="autoTradeIn" class="input-field" value="2,000"></div></div><div><label for="autoLoanTerm">Loan Term (Months)</label><div class="input-group"><input type="number" id="autoLoanTerm" class="input-field" value="60"></div></div><div><label for="autoInterestRate">Interest Rate (%)</label><div class="input-group"><input type="number" id="autoInterestRate" class="input-field" value="7.5"></div></div></div></div>
+                    <div class="lg:col-span-3"><div class="calculator-card p-6"><h2 class="text-2xl font-bold text-white mb-2">Loan Summary</h2><div id="autoMonthlyPaymentContainer" class="result-highlight-container text-center mb-6"><p>Monthly Payment</p><p id="autoMonthlyPayment" class="result-highlight">$0.00</p><input type="number" id="autoMonthlyPaymentInput" class="result-highlight result-input hidden" /></div><div class="grid grid-cols-3 gap-4 text-center mb-8"><div><p>Loan Amount</p><p id="autoLoanAmount" class="text-lg font-semibold">$0.00</p></div><div><p>Total Interest</p><p id="autoTotalInterest" class="text-lg font-semibold">$0.00</p></div><div><p>Total Cost</p><p id="autoTotalCost" class="text-lg font-semibold">$0.00</p></div></div><div class="h-64"><canvas id="autoLoanChart"></canvas></div></div></div>
+                </div>
             </div>
 
             <div id="savings-calculator" class="calculator-container">
-                 <!-- Savings Calculator HTML (Omitted for brevity, structure is consistent) -->
+                <!-- Savings Calculator HTML (unchanged) -->
+                 <header class="text-center mb-10"><h1 class="text-4xl sm:text-5xl font-bold text-white tracking-tight">Savings Goal Calculator</h1></header>
+                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    <div class="lg:col-span-2"><div class="calculator-card p-6 space-y-6"><div><label for="initialDeposit">Initial Deposit</label><div class="input-group"><span>$</span><input type="text" id="initialDeposit" class="input-field" value="1,000"></div></div><div><label for="monthlyContribution">Monthly Contribution</label><div class="input-group"><span>$</span><input type="text" id="monthlyContribution" class="input-field" value="250"></div></div><div><label for="savingsYears">Years to Grow</label><div class="input-group"><input type="number" id="savingsYears" class="input-field" value="10"></div></div><div><label for="savingsInterestRate">Est. Interest Rate (%)</label><div class="input-group"><input type="number" id="savingsInterestRate" class="input-field" value="5"></div></div></div></div>
+                    <div class="lg:col-span-3"><div class="calculator-card p-6"><h2 class="text-2xl font-bold text-white mb-2">Projected Savings</h2><div id="savingsFutureValueContainer" class="result-highlight-container text-center mb-6"><p>Future Value</p><p id="savingsFutureValue" class="result-highlight">$0.00</p><input type="number" id="savingsFutureValueInput" class="result-highlight result-input hidden" /></div><div class="grid grid-cols-2 gap-4 text-center mb-8"><div><p>Total Contributions</p><p id="savingsTotalContributions" class="text-lg font-semibold">$0.00</p></div><div><p>Total Interest Earned</p><p id="savingsTotalInterest" class="text-lg font-semibold">$0.00</p></div></div><div class="h-64"><canvas id="savingsChart"></canvas></div></div></div>
+                </div>
             </div>
             
             <div id="retirement-calculator" class="calculator-container">
-                 <!-- Retirement Calculator HTML (Omitted for brevity, structure is consistent) -->
+                 <!-- Retirement Calculator HTML (unchanged) -->
+                 <header class="text-center mb-10"><h1 class="text-4xl sm:text-5xl font-bold text-white tracking-tight">Retirement Savings Calculator</h1></header>
+                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    <div class="lg:col-span-2"><div class="calculator-card p-6 space-y-6"><div><label for="currentAge">Current Age</label><div class="input-group"><input type="number" id="currentAge" class="input-field" value="30"></div></div><div><label for="retirementAge">Retirement Age</label><div class="input-group"><input type="number" id="retirementAge" class="input-field" value="65"></div></div><div><label for="retCurrentSavings">Current Savings</label><div class="input-group"><span>$</span><input type="text" id="retCurrentSavings" class="input-field" value="50,000"></div></div><div><label for="retMonthlyContrib">Monthly Contribution</label><div class="input-group"><span>$</span><input type="text" id="retMonthlyContrib" class="input-field" value="500"></div></div><div><label for="retInterestRate">Est. Annual Return (%)</label><div class="input-group"><input type="number" id="retInterestRate" class="input-field" value="7"></div></div></div></div>
+                    <div class="lg:col-span-3"><div class="calculator-card p-6"><h2 class="text-2xl font-bold text-white mb-2">Retirement Outlook</h2><div id="retirementNestEggContainer" class="result-highlight-container text-center mb-6"><p>Retirement Nest Egg</p><p id="retirementNestEgg" class="result-highlight">$0.00</p><input type="number" id="retirementNestEggInput" class="result-highlight result-input hidden" /></div><div class="grid grid-cols-2 gap-4 text-center mb-8"><div><p>Total Contributions</p><p id="retTotalContributions" class="text-lg font-semibold">$0.00</p></div><div><p>Total Interest Earned</p><p id="retTotalInterest" class="text-lg font-semibold">$0.00</p></div></div><div class="h-64"><canvas id="retirementChart"></canvas></div></div></div>
+                </div>
             </div>
 
-            <div id="salary-calculator" class="calculator-container active">
-                 <header class="text-center mb-10"><h1 class="text-4xl sm:text-5xl font-bold text-white tracking-tight">Salary Paycheck Calculator</h1></header>
+            <div id="salary-calculator" class="calculator-container">
+                 <header class="text-center mb-10"><h1 class="text-4xl sm:text-5xl font-bold text-white tracking-tight">Advanced Salary Calculator</h1></header>
                  <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
-                    <div class="lg:col-span-3">
-                        <div class="calculator-card p-6">
-                            <div class="flex space-x-8 border-b border-slate-700 mb-6">
-                                <button class="paycheck-tab-button tab-button active" data-target="earnings-panel">Earnings</button>
-                                <button class="paycheck-tab-button tab-button" data-target="taxes-panel">Taxes</button>
-                                <button class="paycheck-tab-button tab-button" data-target="benefits-panel">Benefits</button>
+                    <div class="lg:col-span-2">
+                        <div class="calculator-card p-6 space-y-6">
+                            <div>
+                                <label for="salaryAmount">Salary Amount</label>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="input-group"><span class="text-gray-400 font-semibold">$</span><input type="text" id="salaryAmount" class="input-field" value="50,000"></div>
+                                    <div class="input-group select-group"><select id="salaryFrequency" class="select-field"><option value="year">per Year</option><option value="month">per Month</option><option value="semi-month">per Semi-month</option><option value="bi-week">per Bi-week</option><option value="week">per Week</option><option value="day">per Day</option><option value="hour">per Hour</option></select></div>
+                                </div>
                             </div>
-                            
-                            <div id="paycheck-panels">
-                                <div id="earnings-panel" class="paycheck-panel space-y-6">
-                                    <div><label for="payFrequency" class="block text-sm font-medium text-gray-300 mb-2">How often are you paid?</label><div class="input-group select-group"><select id="payFrequency" class="select-field"><option value="weekly">Weekly</option><option value="bi-weekly" selected>Bi-weekly</option><option value="semi-monthly">Semi-monthly</option><option value="monthly">Monthly</option></select></div></div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-300 mb-2">How are you paid?</label>
-                                        <div class="grid grid-cols-6 gap-4">
-                                            <div class="col-span-2 input-group select-group"><select id="payType" class="select-field"><option value="salary">Salary</option><option value="hourly">Hourly</option></select></div>
-                                            <div class="col-span-2 input-group select-group"><select id="grossPayMethod" class="select-field"><option value="per-year">Per Year</option></select></div>
-                                            <div class="col-span-2 input-group"><span class="text-gray-400 font-semibold">$</span><input type="text" id="grossPayAmount" class="input-field" value="30,912.29"></div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-300 mb-2">Any overtime?</label>
-                                        <div class="grid grid-cols-2 gap-4">
-                                            <div class="input-group"><label class="text-gray-400 px-2">Hours</label><input type="number" id="overtimeHours" class="input-field" value="0"></div>
-                                            <div class="input-group"><label class="text-gray-400 px-2">Rate</label><input type="number" id="overtimeRate" class="input-field" value="1.5">x Regular</div>
-                                        </div>
-                                    </div>
+                             <div class="pt-4 border-t border-slate-700">
+                                <h3 class="text-lg font-semibold mb-3">Work Schedule</h3>
+                                <div class="space-y-4">
+                                    <div><label for="hoursPerWeek">Hours per week</label><div class="input-group"><input type="number" id="hoursPerWeek" class="input-field" value="40"></div></div>
+                                    <div><label for="daysPerWeek">Days per week</label><div class="input-group"><input type="number" id="daysPerWeek" class="input-field" value="5"></div></div>
                                 </div>
-                                
-                                <div id="taxes-panel" class="paycheck-panel hidden space-y-6">
-                                    <div><h3 class="text-xl font-bold text-white">Federal Taxes</h3></div>
-                                    <div><label for="filingStatus" class="block text-sm font-medium text-gray-300 mb-2">Filing Status</label><div class="input-group select-group"><select id="filingStatus" class="select-field"><option value="single">Single</option><option value="married">Married Filing Jointly</option></select></div></div>
-                                    <div><label for="federalAllowances" class="block text-sm font-medium text-gray-300 mb-2">Federal Allowances (W-4)</label><div class="input-group"><input type="number" id="federalAllowances" class="input-field" value="1"></div></div>
-                                    <div class="pt-4 border-t border-slate-700"><h3 class="text-xl font-bold text-white">State Taxes</h3></div>
-                                    <div><label for="stateTaxRate" class="block text-sm font-medium text-gray-300 mb-2">State Income Tax Rate (%)</label><div class="input-group"><input type="number" id="stateTaxRate" class="input-field" value="4.5"></div></div>
-                                </div>
-                                
-                                <div id="benefits-panel" class="paycheck-panel hidden space-y-6">
-                                     <div><h3 class="text-xl font-bold text-white">Pre-Tax Deductions</h3></div>
-                                     <div><label for="deduct401k" class="block text-sm font-medium text-gray-300 mb-2">Retirement/FSA Contribution</label><div class="input-group"><input type="number" id="deduct401k" class="input-field" value="6.1"><span class="text-gray-400 font-semibold pr-2">%</span></div></div>
-                                     <div class="pt-4 border-t border-slate-700"><h3 class="text-xl font-bold text-white">Post-Tax Deductions</h3></div>
-                                     <div><label for="deductInsurance" class="block text-sm font-medium text-gray-300 mb-2">Health Insurance (per pay period)</label><div class="input-group"><span>$</span><input type="text" id="deductInsurance" class="input-field" value="0"></div></div>
+                            </div>
+                             <div class="pt-4 border-t border-slate-700">
+                                <h3 class="text-lg font-semibold mb-3">Time Off</h3>
+                                <div class="space-y-4">
+                                    <div><label for="holidaysPerYear">Holidays per year</label><div class="input-group"><input type="number" id="holidaysPerYear" class="input-field" value="10"></div></div>
+                                    <div><label for="vacationDaysPerYear">Vacation days per year</label><div class="input-group"><input type="number" id="vacationDaysPerYear" class="input-field" value="15"></div></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="lg:col-span-2">
+                    <div class="lg:col-span-3">
                         <div class="calculator-card p-6">
-                            <h2 class="text-2xl font-bold text-white mb-4">Paycheck Summary</h2>
-                             <div class="h-64 mb-6"><canvas id="paycheckChart"></canvas></div>
+                            <h2 class="text-2xl font-bold text-white mb-4">Salary Breakdown</h2>
                             <table class="w-full text-left text-sm results-table">
-                                <tbody id="paycheckTableBody">
-                                    <tr><td>Gross Pay</td><td id="summaryGrossPay">$0.00</td></tr>
-                                    <tr><td>Taxes</td><td id="summaryTaxes">$0.00</td></tr>
-                                    <tr><td>Benefits/Deductions</td><td id="summaryBenefits">$0.00</td></tr>
-                                    <tr class="font-bold text-lg text-white border-t-2 border-teal-400"><td>Take Home</td><td id="summaryTakeHome">$0.00</td></tr>
+                                <thead>
+                                    <tr>
+                                        <th>Frequency</th>
+                                        <th>Unadjusted</th>
+                                        <th>Adjusted for Time Off</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="salaryTableBody">
+                                    <!-- Rows will be generated by JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -223,231 +239,127 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // --- GLOBAL STATE & UTILITIES ---
+        let paymentChart, autoLoanChart, savingsChart, retirementChart;
+        const CHART_COLORS = { teal: 'rgba(45, 212, 191, 1)', blue: 'rgba(96, 165, 250, 1)', purple: 'rgba(167, 139, 250, 1)', pink: 'rgba(244, 114, 182, 1)', red: 'rgba(248, 113, 113, 1)', dark: '#0f172a', light: '#cbd5e1' };
+        const parseCurrency = (value) => parseFloat(String(value).replace(/[^0-9.-]+/g, "")) || 0;
+        const formatCurrency = (value, cents = false) => { const options = { style: 'currency', currency: 'USD' }; if (!cents) { options.minimumFractionDigits = 0; options.maximumFractionDigits = 0; } else { options.minimumFractionDigits = 2; options.maximumFractionDigits = 2; } return new Intl.NumberFormat('en-US', options).format(value); };
+        function animateValue(element, start, end, duration, isCurrency = true, cents = false) { let startTimestamp = null; const step = (timestamp) => { if (!startTimestamp) startTimestamp = timestamp; const progress = Math.min((timestamp - startTimestamp) / duration, 1); const currentVal = progress * (end - start) + start; element.innerHTML = isCurrency ? formatCurrency(currentVal, cents) : currentVal.toFixed(0); if (progress < 1) { window.requestAnimationFrame(step); } }; window.requestAnimationFrame(step); }
+
+        // --- NAVIGATION ---
+        const navLinks = document.querySelectorAll('.sidebar-nav-link');
+        const calculatorSections = document.querySelectorAll('.calculator-container');
+        document.getElementById('calculator-nav').addEventListener('click', (e) => { if (e.target.matches('.sidebar-nav-link')) { const targetId = e.target.dataset.target; navLinks.forEach(link => link.classList.remove('active')); e.target.classList.add('active'); calculatorSections.forEach(section => { section.classList.toggle('active', section.id === `${targetId}-calculator`); }); if (targetId === 'mortgage') initMortgageCalculator(); if (targetId === 'auto-loan') initAutoLoanCalculator(); if (targetId === 'savings') initSavingsCalculator(); if (targetId === 'retirement') initRetirementCalculator(); if (targetId === 'salary') initSalaryCalculator(); } });
+
+        // --- CLICK-TO-EDIT HANDLER ---
+        function setupClickToEdit(containerId, pId, inputId, onUpdate) { const container = document.getElementById(containerId); const pElement = document.getElementById(pId); const inputElement = document.getElementById(inputId); container.addEventListener('click', () => { const parent = pElement.parentElement; parent.querySelectorAll('p').forEach(el => el.classList.add('hidden')); pElement.classList.add('hidden'); inputElement.classList.remove('hidden'); inputElement.value = parseCurrency(pElement.textContent); inputElement.focus(); inputElement.select(); }); const finishEditing = () => { const parent = pElement.parentElement; parent.querySelectorAll('p').forEach(el => el.classList.remove('hidden')); inputElement.classList.add('hidden'); const newValue = parseFloat(inputElement.value); if (!isNaN(newValue)) { onUpdate(newValue); } }; inputElement.addEventListener('blur', finishEditing); inputElement.addEventListener('keydown', (e) => { if (e.key === 'Enter') { finishEditing(); } });}
         
-        const App = {
-            // --- STATE & CONFIG ---
-            activeCalculator: null,
-            elements: {
-                nav: document.getElementById('calculator-nav'),
-                content: document.getElementById('main-content'),
-                containers: document.querySelectorAll('.calculator-container'),
-            },
-            // --- UTILITY FUNCTIONS ---
-            utils: {
-             CHART_COLORS: {
-    teal: 'rgba(45, 212, 191, 1)',
-    blue: 'rgba(96, 165, 250, 1)',
-    purple: 'rgba(167, 139, 250, 1)',
-    red: 'rgba(248, 113, 113, 1)', // <-- THIS LINE ADDED (Red 400)
-},
-                parseCurrency: (value) => parseFloat(String(value).replace(/[^0-9.-]+/g, "")) || 0,
-                formatCurrency: (value, cents = false) => {
-                    const options = { style: 'currency', currency: 'USD' };
-                    if (!cents) {
-                        options.minimumFractionDigits = 0;
-                        options.maximumFractionDigits = 0;
-                    } else {
-                        options.minimumFractionDigits = 2;
-                        options.maximumFractionDigits = 2;
-                    }
-                    return new Intl.NumberFormat('en-US', options).format(value);
-                }
-            },
+        // --- MORTGAGE CALCULATOR ---
+        const m = { homePrice: document.getElementById('homePrice'), downPayment: document.getElementById('downPayment'), loanTerm: document.getElementById('loanTerm'), interestRate: document.getElementById('interestRate'), propTaxes: document.getElementById('propTaxes'), homeInsurance: document.getElementById('homeInsurance'), hoaFees: document.getElementById('hoaFees'), monthlyPaymentEl: document.getElementById('monthlyPayment'), loanAmountInfoEl: document.getElementById('loanAmountInfo'), amortizationTableBody: document.getElementById('amortizationTableBody'), chartTab: document.getElementById('mortgageChartTab'), tableTab: document.getElementById('mortgageTableTab'), chartContainer: document.getElementById('mortgageChartContainer'), tableContainer: document.getElementById('mortgageTableContainer') };
+        function calculateMortgage(animate = true) { const homePrice = parseCurrency(m.homePrice.value); const downPayment = parseCurrency(m.downPayment.value); const interestRate = parseFloat(m.interestRate.value) || 0; const loanTermYears = parseInt(m.loanTerm.value) || 0; const propTaxesMonthly = parseCurrency(m.propTaxes.value) / 12; const homeInsuranceMonthly = parseCurrency(m.homeInsurance.value) / 12; const hoaFees = parseCurrency(m.hoaFees.value); const loanAmount = homePrice - downPayment; m.loanAmountInfoEl.textContent = `based on a loan amount of ${formatCurrency(loanAmount)}`; if (loanAmount <= 0 || loanTermYears <= 0 || interestRate <= 0) return; const monthlyInterestRate = (interestRate / 100) / 12; const numberOfPayments = loanTermYears * 12; const pAndI = loanAmount * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) / (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1) || 0; const totalMonthlyPayment = pAndI + propTaxesMonthly + homeInsuranceMonthly + hoaFees; if (animate) { animateValue(m.monthlyPaymentEl, parseCurrency(m.monthlyPaymentEl.textContent), totalMonthlyPayment, 500, true, true); } else { m.monthlyPaymentEl.textContent = formatCurrency(totalMonthlyPayment, true); } updateMortgageChart(pAndI, propTaxesMonthly, homeInsuranceMonthly, hoaFees); generateAmortization(loanAmount, pAndI, monthlyInterestRate, numberOfPayments); }
+        function updateMortgageChart(pAndI, taxes, insurance, hoa) { const ctx = document.getElementById('paymentChart').getContext('2d'); const data = { labels: ['Principal & Interest', 'Property Tax', 'Home Insurance', 'HOA Fees'], datasets: [{ data: [pAndI, taxes, insurance, hoa], backgroundColor: [CHART_COLORS.teal, CHART_COLORS.blue, CHART_COLORS.purple, CHART_COLORS.pink], borderColor: CHART_COLORS.dark, borderWidth: 4, hoverOffset: 8 }] }; if (paymentChart) { paymentChart.data = data; paymentChart.update(); } else { paymentChart = new Chart(ctx, { type: 'doughnut', data, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { color: CHART_COLORS.light, boxWidth: 12, padding: 20 } } } } }); } }
+        function generateAmortization(loanAmount, pAndI, monthlyInterestRate, numberOfPayments) { let balance = loanAmount; m.amortizationTableBody.innerHTML = ''; for (let i = 1; i <= numberOfPayments; i++) { const interestPayment = balance * monthlyInterestRate; const principalPayment = pAndI - interestPayment; balance -= principalPayment; if (balance < 0) balance = 0; const row = `<tr><td class="p-2">${i}</td><td class="p-2">${formatCurrency(principalPayment, true)}</td><td class="p-2">${formatCurrency(interestPayment, true)}</td><td class="p-2">${formatCurrency(balance, true)}</td></tr>`; m.amortizationTableBody.insertAdjacentHTML('beforeend', row); } }
+        function initMortgageCalculator() { ['homePrice', 'downPayment', 'propTaxes', 'homeInsurance', 'hoaFees'].forEach(id => { const input = document.getElementById(id); input.value = formatCurrency(parseCurrency(input.value)); }); calculateMortgage(); }
+        document.getElementById('mortgage-calculator').addEventListener('input', () => calculateMortgage());
+        m.chartTab.addEventListener('click', () => { m.chartTab.classList.add('active'); m.tableTab.classList.remove('active'); m.chartContainer.classList.remove('hidden'); m.tableContainer.classList.add('hidden'); });
+        m.tableTab.addEventListener('click', () => { m.tableTab.classList.add('active'); m.chartTab.classList.remove('active'); m.tableContainer.classList.remove('hidden'); m.chartContainer.classList.add('hidden'); });
+        setupClickToEdit('monthlyPaymentContainer', 'monthlyPayment', 'monthlyPaymentInput', (newMonthlyPayment) => { const downPayment = parseCurrency(m.downPayment.value); const interestRate = parseFloat(m.interestRate.value) / 100 || 0; const loanTermYears = parseInt(m.loanTerm.value) || 0; const pAndI = newMonthlyPayment - (parseCurrency(m.propTaxes.value) / 12) - (parseCurrency(m.homeInsurance.value) / 12) - parseCurrency(m.hoaFees.value); if (pAndI <= 0 || interestRate <= 0 || loanTermYears <=0) return; const monthlyRate = interestRate / 12; const numPayments = loanTermYears * 12; const loanAmount = pAndI * ( (Math.pow(1 + monthlyRate, numPayments) - 1) / (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) ); const newHomePrice = loanAmount + downPayment; m.homePrice.value = formatCurrency(newHomePrice); calculateMortgage(false); });
 
-            // --- INITIALIZATION ---
-            init() {
-                this.setupNavigation();
-                this.setupEventListeners();
-                const defaultCalc = this.elements.nav.querySelector('.active')?.dataset.target || 'salary';
-                this.switchCalculator(defaultCalc);
-            },
+        // --- AUTO LOAN ---
+        const auto = { price: document.getElementById('autoPrice'), downPayment: document.getElementById('autoDownPayment'), tradeIn: document.getElementById('autoTradeIn'), term: document.getElementById('autoLoanTerm'), rate: document.getElementById('autoInterestRate'), monthlyPayment: document.getElementById('autoMonthlyPayment'), loanAmount: document.getElementById('autoLoanAmount'), totalInterest: document.getElementById('autoTotalInterest'), totalCost: document.getElementById('autoTotalCost') };
+        function calculateAutoLoan(animate = true) { const price = parseCurrency(auto.price.value), down = parseCurrency(auto.downPayment.value), trade = parseCurrency(auto.tradeIn.value), term = parseInt(auto.term.value) || 0, rate = parseFloat(auto.rate.value) / 100 || 0; if (price <= 0 || term <= 0) return; const loanAmount = price - down - trade; if(loanAmount <= 0) return; const monthlyRate = rate / 12, n = term, monthlyPayment = rate > 0 ? loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1) : loanAmount / n; const totalPayment = monthlyPayment * n, totalInterest = totalPayment - loanAmount, totalCost = price + totalInterest; if(animate) { animateValue(auto.monthlyPayment, parseCurrency(auto.monthlyPayment.textContent), monthlyPayment, 500, true, true); } else { auto.monthlyPayment.textContent = formatCurrency(monthlyPayment, true); } animateValue(auto.loanAmount, parseCurrency(auto.loanAmount.textContent), loanAmount, 500); animateValue(auto.totalInterest, parseCurrency(auto.totalInterest.textContent), totalInterest, 500); animateValue(auto.totalCost, parseCurrency(auto.totalCost.textContent), totalCost, 500); updateAutoLoanChart(loanAmount, totalInterest); }
+        function updateAutoLoanChart(principal, interest) { const ctx = document.getElementById('autoLoanChart').getContext('2d'); const data = { labels: ['Principal', 'Total Interest'], datasets: [{ data: [principal, interest], backgroundColor: [CHART_COLORS.teal, CHART_COLORS.red], borderColor: CHART_COLORS.dark, borderWidth: 4 }]}; if (autoLoanChart) { autoLoanChart.data = data; autoLoanChart.update(); } else { autoLoanChart = new Chart(ctx, { type: 'doughnut', data, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: {color: CHART_COLORS.light} } } } }); } }
+        function initAutoLoanCalculator() { calculateAutoLoan(); }
+        document.getElementById('auto-loan-calculator').addEventListener('input', () => calculateAutoLoan());
+        setupClickToEdit('autoMonthlyPaymentContainer', 'autoMonthlyPayment', 'autoMonthlyPaymentInput', (newMonthlyPayment) => { const down = parseCurrency(auto.downPayment.value), trade = parseCurrency(auto.tradeIn.value), term = parseInt(auto.term.value) || 0, rate = parseFloat(auto.rate.value) / 100 || 0; if (term <= 0 || rate <= 0) return; const monthlyRate = rate / 12, n = term; const loanAmount = newMonthlyPayment * ((Math.pow(1 + monthlyRate, n) - 1) / (monthlyRate * Math.pow(1 + monthlyRate, n))); const newPrice = loanAmount + down + trade; auto.price.value = formatCurrency(newPrice); calculateAutoLoan(false); });
 
-            // --- EVENT HANDLING ---
-            setupNavigation() {
-                this.elements.nav.addEventListener('click', (e) => {
-                    if (e.target.matches('.sidebar-nav-link')) {
-                        const targetId = e.target.dataset.target;
-                        this.switchCalculator(targetId);
-                    }
-                });
-            },
-            
-            setupEventListeners() {
-                this.elements.content.addEventListener('input', (e) => {
-                    if (e.target.matches('input, select')) {
-                        this.calculators[this.activeCalculator]?.calculate();
-                    }
-                });
-            },
+        // --- SAVINGS CALCULATOR ---
+        const savings = { canvas: document.getElementById('savingsChart'), initial: document.getElementById('initialDeposit'), contrib: document.getElementById('monthlyContribution'), years: document.getElementById('savingsYears'), rate: document.getElementById('savingsInterestRate'), futureValueEl: document.getElementById('savingsFutureValue'), totalContributionsEl: document.getElementById('savingsTotalContributions'), totalInterestEl: document.getElementById('savingsTotalInterest'), };
+        function calculateSavings(animate = true) { const P = parseCurrency(savings.initial.value), PMT = parseCurrency(savings.contrib.value), t = parseInt(savings.years.value) || 0, r = parseFloat(savings.rate.value) / 100 || 0; if(t <= 0) return; const n = 12, nt = n * t, rOverN = r / n; const fvInitial = P * Math.pow(1 + rOverN, nt); const fvSeries = (r > 0) ? PMT * ((Math.pow(1 + rOverN, nt) - 1) / rOverN) : PMT * nt; const futureValue = fvInitial + fvSeries; const totalContributions = P + (PMT * 12 * t); const totalInterest = futureValue - totalContributions; if (animate) { animateValue(savings.futureValueEl, parseCurrency(savings.futureValueEl.textContent), futureValue, 500); } else { savings.futureValueEl.textContent = formatCurrency(futureValue); } animateValue(savings.totalContributionsEl, parseCurrency(savings.totalContributionsEl.textContent), totalContributions, 500); animateValue(savings.totalInterestEl, parseCurrency(savings.totalInterestEl.textContent), totalInterest, 500); updateSavingsChart(); }
+        function updateSavingsChart() { const ctx = savings.canvas.getContext('2d'); const t = parseInt(savings.years.value) || 0, r = parseFloat(savings.rate.value) / 100 || 0, n = 12, P = parseCurrency(savings.initial.value), PMT = parseCurrency(savings.contrib.value); const labels = Array.from({length: t + 1}, (_, i) => `Y${i}`); const rOverN = r / n; const dataPoints = labels.map((_, i) => { const nt = n * i; const fvInitial = P * Math.pow(1+rOverN, nt); const fvSeries = (r > 0) ? PMT * ((Math.pow(1+rOverN, nt)-1)/rOverN) : PMT * nt; return fvInitial + fvSeries; }); const data = { labels, datasets: [{ label: 'Balance', data: dataPoints, borderColor: CHART_COLORS.teal, backgroundColor: 'rgba(45, 212, 191, 0.2)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: CHART_COLORS.teal, pointHoverRadius: 8 }]}; if (savingsChart) { savingsChart.data = data; savingsChart.update(); } else { savingsChart = new Chart(ctx, { type: 'line', data, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { color: CHART_COLORS.light } }, x: { ticks: { color: CHART_COLORS.light } } } } }); } }
+        function initSavingsCalculator() { calculateSavings(); }
+        document.getElementById('savings-calculator').addEventListener('input', () => calculateSavings(true));
+        setupClickToEdit('savingsFutureValueContainer', 'savingsFutureValue', 'savingsFutureValueInput', (newFutureValue) => { const P = parseCurrency(savings.initial.value), t = parseInt(savings.years.value) || 0, r = parseFloat(savings.rate.value) / 100 || 0; if (t <= 0) return; const n = 12, nt = n*t, rOverN = r/n; const fvInitial = P * Math.pow(1 + rOverN, nt); const numerator = newFutureValue - fvInitial; const denominator = (r > 0) ? (Math.pow(1 + rOverN, nt) - 1) / rOverN : nt; if (denominator > 0) { let newPMT = numerator / denominator; if(newPMT < 0) newPMT = 0; savings.contrib.value = formatCurrency(newPMT); calculateSavings(false); } });
 
-            // --- CORE LOGIC ---
-            switchCalculator(targetId) {
-                this.activeCalculator = targetId;
-                this.elements.nav.querySelectorAll('.sidebar-nav-link').forEach(link => {
-                    link.classList.toggle('active', link.dataset.target === targetId);
-                });
-                this.elements.containers.forEach(container => {
-                    container.classList.toggle('active', container.id === `${targetId}-calculator`);
-                });
-                this.calculators[targetId]?.init?.();
-            },
-            
-            // --- CALCULATOR MODULES ---
-            calculators: {
-                mortgage: { init() {} },
-                'auto-loan': { init() {} },
-                savings: { init() {} },
-                retirement: { init() {} },
+        // --- RETIREMENT CALCULATOR ---
+        const ret = { canvas: document.getElementById('retirementChart'), currentAge: document.getElementById('currentAge'), retirementAge: document.getElementById('retirementAge'), currentSavings: document.getElementById('retCurrentSavings'), monthlyContrib: document.getElementById('retMonthlyContrib'), interestRate: document.getElementById('retInterestRate'), nestEggEl: document.getElementById('retirementNestEgg'), totalContributionsEl: document.getElementById('retTotalContributions'), totalInterestEl: document.getElementById('retTotalInterest'), };
+        function calculateRetirement(animate = true) { const P = parseCurrency(ret.currentSavings.value), PMT = parseCurrency(ret.monthlyContrib.value), r = parseFloat(ret.interestRate.value) / 100 || 0; const t = parseInt(ret.retirementAge.value) - parseInt(ret.currentAge.value) || 0; if(t <= 0) return; const n = 12, nt = n * t, rOverN = r / n; const fvInitial = P * Math.pow(1 + rOverN, nt); const fvSeries = (r > 0) ? PMT * ((Math.pow(1 + rOverN, nt) - 1) / rOverN) : PMT * nt; const nestEgg = fvInitial + fvSeries; const totalContributions = P + (PMT * 12 * t); const totalInterest = nestEgg - totalContributions; if (animate) { animateValue(ret.nestEggEl, parseCurrency(ret.nestEggEl.textContent), nestEgg, 500); } else { ret.nestEggEl.textContent = formatCurrency(nestEgg); } animateValue(ret.totalContributionsEl, parseCurrency(ret.totalContributionsEl.textContent), totalContributions, 500); animateValue(ret.totalInterestEl, parseCurrency(ret.totalInterestEl.textContent), totalInterest, 500); updateRetirementChart(); }
+        function updateRetirementChart() { const ctx = ret.canvas.getContext('2d'); const t = parseInt(ret.retirementAge.value) - parseInt(ret.currentAge.value) || 0; const r = parseFloat(ret.interestRate.value) / 100 || 0, n = 12, P = parseCurrency(ret.currentSavings.value), PMT = parseCurrency(ret.monthlyContrib.value); const labels = Array.from({length: t + 1}, (_, i) => `${parseInt(ret.currentAge.value) + i}`); const rOverN = r / n; const dataPoints = labels.map((_, i) => { const nt = n * i; const fvInitial = P * Math.pow(1+rOverN, nt); const fvSeries = (r > 0) ? PMT * ((Math.pow(1+rOverN, nt)-1)/rOverN) : PMT * nt; return fvInitial + fvSeries; }); const data = { labels, datasets: [{ label: 'Projected Savings', data: dataPoints, borderColor: CHART_COLORS.teal, backgroundColor: 'rgba(45, 212, 191, 0.2)', fill: true, tension: 0.4 }]}; if (retirementChart) { retirementChart.data = data; retirementChart.update(); } else { retirementChart = new Chart(ctx, { type: 'line', data, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { color: CHART_COLORS.light } }, x: { ticks: { color: CHART_COLORS.light } } } } }); } }
+        function initRetirementCalculator() { calculateRetirement(); }
+        document.getElementById('retirement-calculator').addEventListener('input', () => calculateRetirement(true));
+        setupClickToEdit('retirementNestEggContainer', 'retirementNestEgg', 'retirementNestEggInput', (newNestEgg) => { const P = parseCurrency(ret.currentSavings.value), r = parseFloat(ret.interestRate.value) / 100 || 0; const t = parseInt(ret.retirementAge.value) - parseInt(ret.currentAge.value) || 0; if (t <= 0) return; const n = 12, nt = n*t, rOverN = r/n; const fvInitial = P * Math.pow(1 + rOverN, nt); const numerator = newNestEgg - fvInitial; const denominator = (r > 0) ? (Math.pow(1 + rOverN, nt) - 1) / rOverN : nt; if (denominator > 0) { let newPMT = numerator / denominator; if(newPMT < 0) newPMT = 0; ret.monthlyContrib.value = formatCurrency(newPMT); calculateRetirement(false); } });
 
-                salary: {
-                    elements: {},
-                    chart: null,
-                    
-                    init() {
-                        this.elements = {
-                            payFrequency: document.getElementById('payFrequency'),
-                            payType: document.getElementById('payType'),
-                            grossPayMethod: document.getElementById('grossPayMethod'),
-                            grossPayAmount: document.getElementById('grossPayAmount'),
-                            overtimeHours: document.getElementById('overtimeHours'),
-                            overtimeRate: document.getElementById('overtimeRate'),
-                            filingStatus: document.getElementById('filingStatus'),
-                            stateTaxRate: document.getElementById('stateTaxRate'),
-                            deduct401k: document.getElementById('deduct401k'),
-                            deductInsurance: document.getElementById('deductInsurance'),
-                            summaryGrossPay: document.getElementById('summaryGrossPay'),
-                            summaryTaxes: document.getElementById('summaryTaxes'),
-                            summaryBenefits: document.getElementById('summaryBenefits'),
-                            summaryTakeHome: document.getElementById('summaryTakeHome'),
-                            canvas: document.getElementById('paycheckChart'),
-                            paycheckTabs: document.querySelectorAll('.paycheck-tab-button'),
-                            paycheckPanels: document.querySelectorAll('.paycheck-panel')
-                        };
-                        
-                        this.setupTabs();
-                        this.setupDynamicSelect();
-                        this.calculate();
-                    },
-                    
-                    setupTabs() {
-                        this.elements.paycheckTabs.forEach(tab => {
-                            tab.addEventListener('click', () => {
-                                this.elements.paycheckTabs.forEach(t => t.classList.remove('active'));
-                                tab.classList.add('active');
-                                const targetPanelId = tab.dataset.target;
-                                this.elements.paycheckPanels.forEach(panel => {
-                                    panel.classList.toggle('hidden', panel.id !== targetPanelId);
-                                });
-                            });
-                        });
-                    },
-
-                    setupDynamicSelect() {
-                         this.elements.payType.addEventListener('change', () => {
-                            const methodSelect = this.elements.grossPayMethod;
-                            methodSelect.innerHTML = '';
-                            if (this.elements.payType.value === 'salary') {
-                                methodSelect.add(new Option('Per Year', 'per-year'));
-                            } else {
-                                methodSelect.add(new Option('Per Hour', 'per-hour'));
-                            }
-                            this.calculate();
-                        });
-                    },
-
-                    calculate() {
-                        const { utils } = App;
-                        const el = this.elements;
-
-                        const payFrequency = el.payFrequency.value;
-                        const payType = el.payType.value;
-                        const grossPayAmount = utils.parseCurrency(el.grossPayAmount.value);
-                        const overtimeHours = parseFloat(el.overtimeHours.value) || 0;
-                        const overtimeRateMultiplier = parseFloat(el.overtimeRate.value) || 1.5;
-
-                        let annualSalary = 0;
-                        let regularHourlyRate = 0;
-                        if (payType === 'salary') {
-                            annualSalary = grossPayAmount;
-                            regularHourlyRate = annualSalary / (52 * 40);
-                        } else {
-                            regularHourlyRate = grossPayAmount;
-                            annualSalary = regularHourlyRate * 52 * 40;
-                        }
-
-                        const payPeriods = { 'weekly': 52, 'bi-weekly': 26, 'semi-monthly': 24, 'monthly': 12 };
-                        const periodsPerYear = payPeriods[payFrequency];
-                        let grossPayPerPeriod = annualSalary / periodsPerYear;
-
-                        const overtimePay = overtimeHours * (regularHourlyRate * overtimeRateMultiplier);
-                        grossPayPerPeriod += overtimePay;
-
-                        const preTaxDeductions = grossPayPerPeriod * (parseFloat(el.deduct401k.value) / 100);
-                        const taxableIncome = grossPayPerPeriod - preTaxDeductions;
-                        const postTaxDeductions = utils.parseCurrency(el.deductInsurance.value);
-                        const totalBenefits = preTaxDeductions + postTaxDeductions;
-                        
-                        const annualTaxableIncome = taxableIncome * periodsPerYear;
-                        const filingStatus = el.filingStatus.value;
-                        
-                        const taxBrackets = {
-                            single: [ { upto: 11600, rate: 0.10 }, { upto: 47150, rate: 0.12 }, { upto: 100525, rate: 0.22 }, { upto: 191950, rate: 0.24 }, { upto: 243725, rate: 0.32 }, { upto: 609350, rate: 0.35 }, { upto: Infinity, rate: 0.37 } ],
-                            married: [ { upto: 23200, rate: 0.10 }, { upto: 94300, rate: 0.12 }, { upto: 201050, rate: 0.22 }, { upto: 383900, rate: 0.24 }, { upto: 487450, rate: 0.32 }, { upto: 731100, rate: 0.35 }, { upto: Infinity, rate: 0.37 } ]
-                        };
-                        
-                        let annualFederalTax = 0;
-                        let incomeLeft = annualTaxableIncome;
-                        let lastLimit = 0;
-                        for (const bracket of taxBrackets[filingStatus]) {
-                            if (incomeLeft <= 0) break;
-                            const taxableInBracket = Math.min(incomeLeft, bracket.upto - lastLimit);
-                            annualFederalTax += taxableInBracket * bracket.rate;
-                            incomeLeft -= taxableInBracket;
-                            lastLimit = bracket.upto;
-                        }
-
-                        const federalTaxPerPeriod = annualFederalTax / periodsPerYear;
-                        const stateTaxPerPeriod = taxableIncome * (parseFloat(el.stateTaxRate.value) / 100);
-                        const totalTaxes = federalTaxPerPeriod + stateTaxPerPeriod;
-
-                        const takeHomePay = grossPayPerPeriod - totalTaxes - totalBenefits;
-
-                        el.summaryGrossPay.textContent = utils.formatCurrency(grossPayPerPeriod, true);
-                        el.summaryTaxes.textContent = utils.formatCurrency(totalTaxes, true);
-                        el.summaryBenefits.textContent = utils.formatCurrency(totalBenefits, true);
-                        el.summaryTakeHome.textContent = utils.formatCurrency(takeHomePay, true);
-
-                        this.updateChart(takeHomePay, totalTaxes, totalBenefits);
-                    },
-
-                    updateChart(takeHome, taxes, benefits) {
-                        const CHART_COLORS = App.utils.CHART_COLORS;
-                        const ctx = this.elements.canvas.getContext('2d');
-                        const data = {
-                            labels: ['Take Home', 'Taxes', 'Benefits'],
-                            datasets: [{ 
-                                data: [takeHome, taxes, benefits], 
-                                backgroundColor: [CHART_COLORS.teal, CHART_COLORS.red, CHART_COLORS.purple],
-                                borderColor: CHART_COLORS.medium,
-                                borderWidth: 4,
-                                hoverOffset: 8
-                            }]
-                        };
-                        if (this.chart) { 
-                            this.chart.data = data; 
-                            this.chart.update(); 
-                        } else { 
-                            this.chart = new Chart(ctx, { type: 'doughnut', data, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { color: CHART_COLORS.light, boxWidth: 12, padding: 20 } } } } }); 
-                        }
-                    }
-                }
-            }
+        // --- SALARY CALCULATOR ---
+        const sal = {
+            amount: document.getElementById('salaryAmount'), frequency: document.getElementById('salaryFrequency'),
+            hoursPerWeek: document.getElementById('hoursPerWeek'), daysPerWeek: document.getElementById('daysPerWeek'),
+            holidays: document.getElementById('holidaysPerYear'), vacation: document.getElementById('vacationDaysPerYear'),
+            tableBody: document.getElementById('salaryTableBody')
         };
+        function calculateSalary() {
+            const amount = parseCurrency(sal.amount.value);
+            const frequency = sal.frequency.value;
+            const hoursPerWeek = parseFloat(sal.hoursPerWeek.value) || 0;
+            const daysPerWeek = parseFloat(sal.daysPerWeek.value) || 0;
+            const holidays = parseFloat(sal.holidays.value) || 0;
+            const vacation = parseFloat(sal.vacation.value) || 0;
 
-        App.init();
+            if (amount <= 0 || hoursPerWeek <= 0 || daysPerWeek <= 0) return;
 
+            // Convert input to an unadjusted annual salary
+            let unadjustedAnnual = 0;
+            switch(frequency) {
+                case 'hour': unadjustedAnnual = amount * hoursPerWeek * 52; break;
+                case 'day': unadjustedAnnual = amount * daysPerWeek * 52; break;
+                case 'week': unadjustedAnnual = amount * 52; break;
+                case 'bi-week': unadjustedAnnual = amount * 26; break;
+                case 'semi-month': unadjustedAnnual = amount * 24; break;
+                case 'month': unadjustedAnnual = amount * 12; break;
+                case 'quarter': unadjustedAnnual = amount * 4; break;
+                case 'year': unadjustedAnnual = amount; break;
+            }
+
+            const workDaysInYear = (daysPerWeek * 52);
+            const paidDaysOff = holidays + vacation;
+            const actualWorkDays = workDaysInYear - paidDaysOff;
+
+            const adjustedAnnual = (workDaysInYear > 0) ? (unadjustedAnnual / workDaysInYear) * actualWorkDays : 0;
+            
+            const results = [
+                { label: 'Annual', unadjusted: unadjustedAnnual, adjusted: adjustedAnnual },
+                { label: 'Quarterly', unadjusted: unadjustedAnnual / 4, adjusted: adjustedAnnual / 4 },
+                { label: 'Monthly', unadjusted: unadjustedAnnual / 12, adjusted: adjustedAnnual / 12 },
+                { label: 'Semi-monthly', unadjusted: unadjustedAnnual / 24, adjusted: adjustedAnnual / 24 },
+                { label: 'Bi-weekly', unadjusted: unadjustedAnnual / 26, adjusted: adjustedAnnual / 26 },
+                { label: 'Weekly', unadjusted: unadjustedAnnual / 52, adjusted: adjustedAnnual / 52 },
+                { label: 'Daily', unadjusted: unadjustedAnnual / workDaysInYear, adjusted: adjustedAnnual / actualWorkDays },
+                { label: 'Hourly', unadjusted: unadjustedAnnual / (hoursPerWeek * 52), adjusted: adjustedAnnual / (actualWorkDays * (hoursPerWeek/daysPerWeek))},
+            ];
+            
+            updateSalaryTable(results);
+        }
+
+        function updateSalaryTable(results) {
+            sal.tableBody.innerHTML = '';
+            results.forEach(res => {
+                const row = `
+                    <tr>
+                        <td>${res.label}</td>
+                        <td>${formatCurrency(res.unadjusted, true)}</td>
+                        <td>${formatCurrency(res.adjusted, true)}</td>
+                    </tr>
+                `;
+                sal.tableBody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+        
+        function initSalaryCalculator() { calculateSalary(); }
+        document.getElementById('salary-calculator').addEventListener('input', calculateSalary);
+
+
+        // --- INITIALIZE DEFAULT CALCULATOR ---
+        initMortgageCalculator();
     });
     </script>
 </body>
 </html>
-
