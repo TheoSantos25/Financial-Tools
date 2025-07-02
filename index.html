@@ -185,48 +185,64 @@
                     <div class="lg:col-span-3"><div class="calculator-card p-6"><h2 class="text-2xl font-bold text-white mb-2">Retirement Outlook</h2><div id="retirementNestEggContainer" class="result-highlight-container text-center mb-6"><p>Retirement Nest Egg</p><p id="retirementNestEgg" class="result-highlight">$0.00</p><input type="number" id="retirementNestEggInput" class="result-highlight result-input hidden" /></div><div class="grid grid-cols-2 gap-4 text-center mb-8"><div><p>Total Contributions</p><p id="retTotalContributions" class="text-lg font-semibold">$0.00</p></div><div><p>Total Interest Earned</p><p id="retTotalInterest" class="text-lg font-semibold">$0.00</p></div></div><div class="h-64"><canvas id="retirementChart"></canvas></div></div></div>
                 </div>
             </div>
-
-            <div id="salary-calculator" class="calculator-container">
-                 <header class="text-center mb-10"><h1 class="text-4xl sm:text-5xl font-bold text-white tracking-tight">Advanced Salary Calculator</h1></header>
+<div id="salary-calculator" class="calculator-container active">
+                 <header class="text-center mb-10"><h1 class="text-4xl sm:text-5xl font-bold text-white tracking-tight">Salary Paycheck Calculator</h1></header>
                  <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
-                    <div class="lg:col-span-2">
-                        <div class="calculator-card p-6 space-y-6">
-                            <div>
-                                <label for="salaryAmount">Salary Amount</label>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="input-group"><span class="text-gray-400 font-semibold">$</span><input type="text" id="salaryAmount" class="input-field" value="50,000"></div>
-                                    <div class="input-group select-group"><select id="salaryFrequency" class="select-field"><option value="year">per Year</option><option value="month">per Month</option><option value="semi-month">per Semi-month</option><option value="bi-week">per Bi-week</option><option value="week">per Week</option><option value="day">per Day</option><option value="hour">per Hour</option></select></div>
-                                </div>
+                    <div class="lg:col-span-3">
+                        <div class="calculator-card p-6">
+                            <div class="flex space-x-8 border-b border-slate-700 mb-6">
+                                <button class="paycheck-tab-button tab-button active" data-target="earnings-panel">Earnings</button>
+                                <button class="paycheck-tab-button tab-button" data-target="taxes-panel">Taxes</button>
+                                <button class="paycheck-tab-button tab-button" data-target="benefits-panel">Benefits</button>
                             </div>
-                             <div class="pt-4 border-t border-slate-700">
-                                <h3 class="text-lg font-semibold mb-3">Work Schedule</h3>
-                                <div class="space-y-4">
-                                    <div><label for="hoursPerWeek">Hours per week</label><div class="input-group"><input type="number" id="hoursPerWeek" class="input-field" value="40"></div></div>
-                                    <div><label for="daysPerWeek">Days per week</label><div class="input-group"><input type="number" id="daysPerWeek" class="input-field" value="5"></div></div>
+                            
+                            <div id="paycheck-panels">
+                                <div id="earnings-panel" class="paycheck-panel space-y-6">
+                                    <div><label for="payFrequency" class="block text-sm font-medium text-gray-300 mb-2">How often are you paid?</label><div class="input-group select-group"><select id="payFrequency" class="select-field"><option value="weekly">Weekly</option><option value="bi-weekly" selected>Bi-weekly</option><option value="semi-monthly">Semi-monthly</option><option value="monthly">Monthly</option></select></div></div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">How are you paid?</label>
+                                        <div class="grid grid-cols-6 gap-4">
+                                            <div class="col-span-2 input-group select-group"><select id="payType" class="select-field"><option value="salary">Salary</option><option value="hourly">Hourly</option></select></div>
+                                            <div class="col-span-2 input-group select-group"><select id="grossPayMethod" class="select-field"><option value="per-year">Per Year</option></select></div>
+                                            <div class="col-span-2 input-group"><span class="text-gray-400 font-semibold">$</span><input type="text" id="grossPayAmount" class="input-field" value="30,912.29"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Any overtime?</label>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div class="input-group"><label class="text-gray-400 px-2">Hours</label><input type="number" id="overtimeHours" class="input-field" value="0"></div>
+                                            <div class="input-group"><label class="text-gray-400 px-2">Rate</label><input type="number" id="overtimeRate" class="input-field" value="1.5">x Regular</div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                             <div class="pt-4 border-t border-slate-700">
-                                <h3 class="text-lg font-semibold mb-3">Time Off</h3>
-                                <div class="space-y-4">
-                                    <div><label for="holidaysPerYear">Holidays per year</label><div class="input-group"><input type="number" id="holidaysPerYear" class="input-field" value="10"></div></div>
-                                    <div><label for="vacationDaysPerYear">Vacation days per year</label><div class="input-group"><input type="number" id="vacationDaysPerYear" class="input-field" value="15"></div></div>
+                                
+                                <div id="taxes-panel" class="paycheck-panel hidden space-y-6">
+                                    <div><h3 class="text-xl font-bold text-white">Federal Taxes</h3></div>
+                                    <div><label for="filingStatus" class="block text-sm font-medium text-gray-300 mb-2">Filing Status</label><div class="input-group select-group"><select id="filingStatus" class="select-field"><option value="single">Single</option><option value="married">Married Filing Jointly</option></select></div></div>
+                                    <div><label for="federalAllowances" class="block text-sm font-medium text-gray-300 mb-2">Federal Allowances (W-4)</label><div class="input-group"><input type="number" id="federalAllowances" class="input-field" value="1"></div></div>
+                                    <div class="pt-4 border-t border-slate-700"><h3 class="text-xl font-bold text-white">State Taxes</h3></div>
+                                    <div><label for="stateTaxRate" class="block text-sm font-medium text-gray-300 mb-2">State Income Tax Rate (%)</label><div class="input-group"><input type="number" id="stateTaxRate" class="input-field" value="4.5"></div></div>
+                                </div>
+                                
+                                <div id="benefits-panel" class="paycheck-panel hidden space-y-6">
+                                     <div><h3 class="text-xl font-bold text-white">Pre-Tax Deductions</h3></div>
+                                     <div><label for="deduct401k" class="block text-sm font-medium text-gray-300 mb-2">Retirement/FSA Contribution</label><div class="input-group"><input type="number" id="deduct401k" class="input-field" value="6.1"><span class="text-gray-400 font-semibold pr-2">%</span></div></div>
+                                     <div class="pt-4 border-t border-slate-700"><h3 class="text-xl font-bold text-white">Post-Tax Deductions</h3></div>
+                                     <div><label for="deductInsurance" class="block text-sm font-medium text-gray-300 mb-2">Health Insurance (per pay period)</label><div class="input-group"><span>$</span><input type="text" id="deductInsurance" class="input-field" value="0"></div></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="lg:col-span-3">
+                    <div class="lg:col-span-2">
                         <div class="calculator-card p-6">
-                            <h2 class="text-2xl font-bold text-white mb-4">Salary Breakdown</h2>
+                            <h2 class="text-2xl font-bold text-white mb-4">Paycheck Summary</h2>
+                             <div class="h-64 mb-6"><canvas id="paycheckChart"></canvas></div>
                             <table class="w-full text-left text-sm results-table">
-                                <thead>
-                                    <tr>
-                                        <th>Frequency</th>
-                                        <th>Unadjusted</th>
-                                        <th>Adjusted for Time Off</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="salaryTableBody">
-                                    <!-- Rows will be generated by JS -->
+                                <tbody id="paycheckTableBody">
+                                    <tr><td>Gross Pay</td><td id="summaryGrossPay">$0.00</td></tr>
+                                    <tr><td>Taxes</td><td id="summaryTaxes">$0.00</td></tr>
+                                    <tr><td>Benefits/Deductions</td><td id="summaryBenefits">$0.00</td></tr>
+                                    <tr class="font-bold text-lg text-white border-t-2 border-teal-400"><td>Take Home</td><td id="summaryTakeHome">$0.00</td></tr>
                                 </tbody>
                             </table>
                         </div>
